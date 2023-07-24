@@ -37,7 +37,7 @@ setInterval(() => {
 }, 10);
 function vechim(e){
     bird ={
-        x: hinhnen.width/3,
+        x: hinhnen.width/2,
         y: hinhnen.height/3
     }
 }
