@@ -1,6 +1,6 @@
 var canvas = document.getElementById("game");
 var context = canvas.getContext("2d");
-var scoredisplay = document.getElementById("score");
+var scoreDisplay = document.getElementById("score");
 let playButton = document.getElementById("play");
 let playAgainButton = document.getElementById("playAgain");
 let label = document.getElementById("label");
@@ -12,81 +12,80 @@ let second = 0;
 let minutes = 0;
 let milisecond = 0;
 
-var hinhchim = new Image();
-var hinhnen = new Image();
-var ongtren = new Image();
-var ongduoi = new Image();
-hinhchim.src = "bird.png";
-hinhnen.src = "hinhnen.png";
-ongtren.src = "ongtren.png";
-ongduoi.src = "ongduoi.png";
-console.log("HÌnh nền", hinhnen.width);
+var birdPicture = new Image();
+var wallet = new Image();
+var pipeAbove = new Image();
+var pipeBelow = new Image();
+birdPicture.src = "bird.png";
+wallet.src = "hinhnen.png";
+pipeAbove.src = "ongtren.png";
+pipeBelow.src = "ongduoi.png";
+console.log("HÌnh nền", wallet.width);
 var bird = {};
-
+const milisecondOfSecond = 100
+const secondOfMinute = 60
+const ten = 10
 setInterval(() => {
     milisecond++
-    if(milisecond == 100){
+    if (milisecond == milisecondOfSecond) {
         second++
         milisecond = 0
     }
-    if(second == 60) {
+    if (second == secondOfMinute) {
         minutes++;
-        second = 0;   
+        second = 0;
     }
-    timeDisplay = `${minutes < 10 ? "0" + minutes : minutes}:${second < 10 ? "0" + second : second}:${milisecond < 10 ? "0" + milisecond : milisecond}`;
+    timeDisplay = `${minutes < ten ? "0" + minutes : minutes}:${second < ten ? "0" + second : second}:${milisecond < ten ? "0" + milisecond : milisecond}`;
 }, 10);
-function vechim(e){
-    bird ={
-        x: hinhnen.width/2,
-        y: hinhnen.height/3
+function drawBird(e) {
+    bird = {
+        x: wallet.width / 2,
+        y: wallet.height / 3
     }
 }
-function thietlap(e){
+function designGame(e) {
     score = 0
     scoreBefore = 0
-    ong = [];
-    ong[0] = {
-    x:canvas.width,
-    y:0,
-    statusScore: false,
-    statusOng: false
-}
+    pipe = [];
+    pipe[0] = {
+        x: canvas.width,
+        y: 0,
+        statusScore: false,
+        statuspipe: false
+    }
     tocDo = 2
 }
 function reset(e) {
-    vechim()
-    thietlap()
+    drawBird()
+    designGame()
     second = 0;
     minutes = 0;
     milisecond = 0;
     timeDisplay = "00:00:00";
     time.innerHTML = "Time: " + timeDisplay;
 }
-function getHighScore(){
+function getHighScore() {
     maxScore = localStorage.getItem("highScore");
     if (maxScore === null) {
         maxScore = 0;
     } else {
         maxScore = parseInt(maxScore);
     }
-    bestScore.innerHTML = `Best Score: ${maxScore}` 
-
-
+    bestScore.innerHTML = `Best Score: ${maxScore}`
 }
-playButton.addEventListener("click", function(e) {
-    play();
+playButton.addEventListener("click", function (e) {
     playButton.style.display = "none"
-    // playButton.classList.add("hide")
+    play();  
 })
-playAgainButton.addEventListener("click", function(e){
+playAgainButton.addEventListener("click", function (e) {
     reset()
     play();
     label.style.display = "none"
 })
-hinhnen.onload = function() {
-    vechim()
-    context.drawImage(hinhnen,0,0)
-    context.drawImage(hinhchim,bird.x,bird.y)
+wallet.onload = function () {
+    drawBird()
+    context.drawImage(wallet, 0, 0)
+    context.drawImage(birdPicture, bird.x, bird.y)
 
     let maxScore = localStorage.getItem("highScore");
     if (maxScore === null) {
@@ -94,76 +93,72 @@ hinhnen.onload = function() {
     } else {
         maxScore = parseInt(maxScore);
     }
-    bestScore.innerHTML = `Best Score: ${maxScore}` 
-    getHighScore() 
+    bestScore.innerHTML = `Best Score: ${maxScore}`
+    getHighScore()
 }
-var khoangcachgiuahaiong = 150
-var khoangcachdenongduoi;
+var pipeGap = 150
+var gapToPipeBelow;
 let maxScore = 0
 
-thietlap()
-function play(){
-    context.drawImage(hinhnen,0,0);
-    context.drawImage(hinhchim,bird.x,bird.y);
+designGame()
+function play() {
+    context.drawImage(wallet, 0, 0);
+    context.drawImage(birdPicture, bird.x, bird.y);
 
     getHighScore()
 
-    for(i=0;i<ong.length;i++){
-        context.drawImage(ongtren,ong[i].x,ong[i].y);
-        khoangcachdenongduoi = ongtren.height + khoangcachgiuahaiong;
-        context.drawImage(ongduoi,ong[i].x,ong[i].y+khoangcachdenongduoi);
-        
-        ong[i].x -= tocDo;
-        if(score > scoreBefore && score % 10 === 0 ){
+    for (i = 0; i < pipe.length; i++) {
+        context.drawImage(pipeAbove, pipe[i].x, pipe[i].y);
+        gapToPipeBelow = pipeAbove.height + pipeGap;
+        context.drawImage(pipeBelow, pipe[i].x, pipe[i].y + gapToPipeBelow);
+
+        pipe[i].x -= tocDo;
+        if (score > scoreBefore && score % 10 === 0) {
             console.log("trừ đi");
             tocDo += 1;
-            scoreBefore = score;            
+            scoreBefore = score;
         }
-        if(ong[i].x <= canvas.width / 2 && ong[i].statusOng == false) {
-            ong.push({
-                x:canvas.width,
-                y:Math.floor(Math.random()*ongtren.height)-ongtren.height,
+        if (pipe[i].x <= canvas.width / 2 && pipe[i].statuspipe == false) {
+            pipe.push({
+                x: canvas.width,
+                y: Math.floor(Math.random() * pipeAbove.height) - pipeAbove.height,
                 statusScore: false,
-                statusOng: false
+                statuspipe: false
             })
-            ong[i].statusOng = true;
-        }                 
-        if(ong[i].x <= 0)ong.splice(0,1)
-        // console.log("Ong x, i", ong[i].x,);
-        if(ong[i].x < bird.x && ong[i].statusScore == false ){
+            pipe[i].statuspipe = true;
+        }
+        if (pipe[i].x <= 0) pipe.splice(0, 1)
+        if (pipe[i].x < bird.x && pipe[i].statusScore == false) {
             score++;
-            ong[i].statusScore = true;
+            pipe[i].statusScore = true;
         };
 
-        if(score > maxScore){
+        if (score > maxScore) {
             maxScore = score;
             localStorage.setItem("highScore", maxScore);
         }
-        
 
-        if(bird.y == 0 ||
-        bird.y + hinhchim.height == canvas.height||
-        bird.x + hinhchim.width >= ong[i].x && 
-        bird.x <= ong[i].x + ongtren.width
-        && (bird.y <= ong[i].y + ongtren.height||
-        bird.y + hinhchim.height >= ong[i].y + khoangcachdenongduoi)    
-        ){
+
+        if (bird.y == 0 ||
+            bird.y + birdPicture.height == canvas.height ||
+            bird.x + birdPicture.width >= pipe[i].x &&
+            bird.x <= pipe[i].x + pipeAbove.width
+            && (bird.y <= pipe[i].y + pipeAbove.height ||
+                bird.y + birdPicture.height >= pipe[i].y + gapToPipeBelow)
+        ) {
             label.style.display = "block";
             return;
-        } 
+        }
     }
-    bird.y+=2;
+    bird.y += 2;
     requestAnimationFrame(play)
-    scoredisplay.innerHTML = "Score: " + score;
+    scoreDisplay.innerHTML = "Score: " + score;
 
     time.innerHTML = "Time: " + timeDisplay;
     bestScore.innerHTML = "Best Score: " + maxScore;
 }
-document.addEventListener("keydown",function(e){
-    if(e.code === "Space" || e.code === "Spacebar"){
-        bird.y-= 80;
+document.addEventListener("keydown", function (e) {
+    if (e.code === "Space" || e.code === "Spacebar") {
+        bird.y -= 80;
     }
 })
-
-
-
