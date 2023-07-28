@@ -7,7 +7,9 @@ let label = document.getElementById("label");
 let bestScore = document.getElementById("bestScore");
 let time = document.getElementById("time");
 console.log(time);
-
+var audioDie = new Audio('die.mp3');
+var audioFlap = new Audio('flap.mp3');
+var audioPoint = new Audio('point.mp3');
 let second = 0;
 let minutes = 0;
 let milisecond = 0;
@@ -75,11 +77,11 @@ function getHighScore() {
 }
 playButton.addEventListener("click", function (e) {
     playButton.style.display = "none"
-    play();  
+    playGame();  
 })
 playAgainButton.addEventListener("click", function (e) {
     reset()
-    play();
+    playGame();
     label.style.display = "none"
 })
 wallet.onload = function () {
@@ -101,7 +103,7 @@ var gapToPipeBelow;
 let maxScore = 0
 
 designGame()
-function play() {
+function playGame() {
     context.drawImage(wallet, 0, 0);
     context.drawImage(birdPicture, bird.x, bird.y);
 
@@ -130,6 +132,7 @@ function play() {
         if (pipe[i].x <= 0) pipe.splice(0, 1)
         if (pipe[i].x < bird.x && pipe[i].statusScore == false) {
             score++;
+            audioPoint.play();
             pipe[i].statusScore = true;
         };
 
@@ -146,12 +149,13 @@ function play() {
             && (bird.y <= pipe[i].y + pipeAbove.height ||
                 bird.y + birdPicture.height >= pipe[i].y + gapToPipeBelow)
         ) {
+            audioDie.play();
             label.style.display = "block";
             return;
         }
     }
     bird.y += 2;
-    requestAnimationFrame(play)
+    requestAnimationFrame(playGame)
     scoreDisplay.innerHTML = "Score: " + score;
 
     time.innerHTML = "Time: " + timeDisplay;
@@ -159,6 +163,7 @@ function play() {
 }
 document.addEventListener("keydown", function (e) {
     if (e.code === "Space" || e.code === "Spacebar") {
+        audioFlap.play();
         bird.y -= 80;
     }
 })
